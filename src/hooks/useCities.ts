@@ -1,13 +1,6 @@
 import { useState } from "react";
-// TODO - remove react query if not needed
-import { useQuery } from "react-query";
 import { TCity } from "../_types/TCity";
 import { citiesData, CityProperty } from "./cities";
-
-// TODO - remove unused const
-const DEFAULT_STALE_TIME = 5 * 60 * 1000; // 5min
-const citiesSearchQuery = 'searchCitiesQuery';
-
 
 const useCities = () => {
     const [cities, setCities] = useState<TCity[]>([]);

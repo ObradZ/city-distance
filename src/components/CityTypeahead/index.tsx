@@ -8,9 +8,11 @@ import { CityProperty } from "../../hooks/cities";
 export type CityTypeaheadProps = {
     label: string,
     id: string,
+    isInvalid: boolean,
+    setStateData: (city: TCity) => void,
 }
 
-const CityTypeahead = ({ label, id }: CityTypeaheadProps) => {
+const CityTypeahead = ({ label, id, setStateData, isInvalid }: CityTypeaheadProps) => {
     const { cities, isLoading, getCitiesFromSearch } = useCities();
     const [searchQuery, setSearchQuery] = useState<string>("");
     const debounceCityQuery = useDebounce(searchQuery);
@@ -22,7 +24,10 @@ const CityTypeahead = ({ label, id }: CityTypeaheadProps) => {
     }, [debounceCityQuery]);
 
     const onCityChange = (selected: TCity[]) => {
-        console.log('selected city: ', selected[0]);
+        if (selected.length > 0) {
+            setStateData(selected[0]);
+            console.log('selected city: ', selected[0]);
+        }
     }
 
     return (
@@ -35,8 +40,12 @@ const CityTypeahead = ({ label, id }: CityTypeaheadProps) => {
                 onInputChange={(text) => setSearchQuery(text.toLowerCase())}
                 isLoading={isLoading}
                 emptyLabel="No cities"
-                style={{ width: '325px' }}
+                // style={}
                 onChange={(selected) => onCityChange(selected as TCity[])}
+                inputProps={{
+                    className: isInvalid ? 'border-danger' : '',
+                    style: { width: '325px' }
+                }}
             />
         </div>
     )

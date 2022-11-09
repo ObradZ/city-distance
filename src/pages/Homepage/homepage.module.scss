@@ -1,8 +1,13 @@
 .form {
-  width: 700px;
-  display: flex;
-  flex-wrap: wrap;
-  padding: 1.2rem;
-  position: relative;
-  justify-content: space-between;
+    width: 700px;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1.2rem;
+    position: relative;
+    justify-content: space-between;
+}
+
+.removeCityBtn {
+    position: relative;
+    top: 24px;
 }
