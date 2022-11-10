@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/city-distance/static/css/main.5b7ea3bc.css",
-    "main.js": "/city-distance/static/js/main.7eb6a819.js",
+    "main.js": "/city-distance/static/js/main.b8c669ab.js",
     "static/js/787.d30b46f1.chunk.js": "/city-distance/static/js/787.d30b46f1.chunk.js",
     "index.html": "/city-distance/index.html",
     "main.5b7ea3bc.css.map": "/city-distance/static/css/main.5b7ea3bc.css.map",
-    "main.7eb6a819.js.map": "/city-distance/static/js/main.7eb6a819.js.map",
+    "main.b8c669ab.js.map": "/city-distance/static/js/main.b8c669ab.js.map",
     "787.d30b46f1.chunk.js.map": "/city-distance/static/js/787.d30b46f1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.5b7ea3bc.css",
-    "static/js/main.7eb6a819.js"
+    "static/js/main.b8c669ab.js"
   ]
 }
