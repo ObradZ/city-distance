@@ -1,15 +1,14 @@
 import { useState, useEffect, FormEvent } from "react";
 import { TCity, TIntermediateCity } from "../../_types/TCity";
 import { getTomorrowDate } from "../../functions/date/getTomorrowDate";
-import { THomeInputData, THomeFormErrors, THomeFormData } from "../../_types/TForms";
+import { THomeInputData, THomeFormErrors } from "../../_types/TForms";
 import { getRandomId } from "../../functions/helpers/helpers";
-import { useSearchParams } from 'react-router-dom';
-import { HP_FORM_URL_PARAMS } from "../../_types/TForms";
-import { getCityFromUrl } from "../../functions/helpers/helpers";
-import { CITY_PROPERTY } from "../../hooks/cities";
-import { validateForm } from "../../functions/validation/formValidation";
+import { useSearchParams, ParamKeyValuePair, createSearchParams, useNavigate } from "react-router-dom";
+import { CITY_PROPERTY } from "../../_fakeData/cities";
+import { getIsInvalidDate, validateForm } from "../../functions/validation/formValidation";
 
 const useHomepageForm = () => {
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [originCity, setOriginCity] = useState<TCity | null>(null);
     const [destinationCity, setDestinationCity] = useState<TCity | null>(null);
@@ -31,12 +30,12 @@ const useHomepageForm = () => {
         setIntermediateCities((prev) => prev.filter((icity) => icity.id !== id));
     };
 
-    const onIntermediateCityChange = (city: TCity, id: string) => {
+    const onIntermediateCityChange = (city: TCity | null, id: string) => {
         const newCity = { id, value: city };
         // Checks if city value already exists and should be updated or we need to add new value
         const targetIndex = intermediateCities.findIndex((cityItem) => cityItem.id === newCity.id);
         if (targetIndex === -1) {
-            setIntermediateCities((prev) => [...prev, newCity])
+            setIntermediateCities((prev) => [...prev, newCity]);
         } else {
             const updatedCities = [...intermediateCities];
             updatedCities[targetIndex] = newCity;
@@ -61,33 +60,31 @@ const useHomepageForm = () => {
             return;
         }
 
-        const interCities = intermediateCities.map((c) => c.value);
-        const formData = {
-            originCity,
-            destinationCity,
-            intermediateCities: interCities,
-            date,
-            passengers: parseInt(passengers || ''),
-        } as THomeFormData;
+        // const interCities = intermediateCities.map((c) => c.value);
+        // const formData = {
+        //     originCity,
+        //     destinationCity,
+        //     intermediateCities: interCities,
+        //     date,
+        //     passengers: parseInt(passengers || ''),
+        // } as THomeFormData;
+
+        const paramValues = generateSearchParamDataFromState();
+        const params = createSearchParams(paramValues);
+        navigate({
+            pathname: "result",
+            search: params.toString(),
+        });
     };
-
-    // Handle routes
-    // Reading from url
-    useEffect(() => {
-        const urlOriginCity = getCityFromUrl(HP_FORM_URL_PARAMS.ORIGIN_CITY, searchParams);
-        setOriginCity(urlOriginCity || null);
-        const urlDestinationCity = getCityFromUrl(HP_FORM_URL_PARAMS.DESTINATION_CITY, searchParams);
-        setOriginCity(urlDestinationCity || null);
-        console.log('search params', searchParams.get('intermediateCities'))
-        const urlDate = searchParams.get('date');
-        setDate(urlDate || tomorrowDate);
-
-        const urlPassengers = searchParams.get('passengers');
-        setDate(urlPassengers || tomorrowDate);
-
-    }, []);
-    // Writing to url
-    useEffect(() => {
+    // Generating search param data
+    const generateSearchParamDataFromState = () => {
+        const newParams: ParamKeyValuePair[] = [];
+        if (originCity?.[CITY_PROPERTY.NAME]) {
+            newParams.push(["originCity", originCity[CITY_PROPERTY.NAME]]);
+        }
+        if (destinationCity?.[CITY_PROPERTY.NAME]) {
+            newParams.push(["destinationCity", destinationCity[CITY_PROPERTY.NAME]]);
+        }
         const citiesToAdd: string[] = [];
         intermediateCities?.forEach((i) => {
             if (i?.value?.[CITY_PROPERTY.NAME]) {
@@ -95,8 +92,55 @@ const useHomepageForm = () => {
             }
         });
         if (citiesToAdd.length > 0) {
-            setSearchParams([['intermediateCities', citiesToAdd.join(',')]]);
+            newParams.push(["intermediateCities", citiesToAdd.join(",")]);
+            setSearchParams([
+                ["intermediateCities", citiesToAdd.join(",")],
+                ["date", date],
+            ]);
         }
+
+        if (date && !getIsInvalidDate(date)) {
+            newParams.push(["date", date]);
+        }
+        if (passengers) {
+            newParams.push(["passengers", passengers]);
+        }
+        return newParams;
+    };
+
+    // Reading from url
+    useEffect(() => {
+        const originCityName = searchParams.get("originCity");
+        originCityName && setOriginCity([originCityName, 0, 0] || null);
+
+        const destinationCityName = searchParams.get("destinationCity");
+        destinationCityName && setDestinationCity([destinationCityName, 0, 0] || null);
+
+        const intermediateCityNames = searchParams.get("intermediateCities")?.split(",");
+        if (intermediateCityNames && intermediateCityNames?.length > 0) {
+            const interCities = intermediateCityNames?.map((name) => {
+                const cityValue: TCity = [name, 0, 0];
+                const id = `city-${getRandomId()}-${intermediateCities.length}`;
+                return { id, value: cityValue };
+            });
+
+            setIntermediateCities(interCities);
+        }
+
+        const urlDate = searchParams.get("date");
+        urlDate && setDate(urlDate || tomorrowDate);
+
+        const urlPassengers = searchParams.get("passengers");
+        urlPassengers && setPassengers(urlPassengers || tomorrowDate);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Writing to url
+    useEffect(() => {
+        const newParams = generateSearchParamDataFromState();
+        setSearchParams(newParams);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [originCity, destinationCity, intermediateCities, date, passengers]);
 
     return {

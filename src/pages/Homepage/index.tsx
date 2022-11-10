@@ -1,22 +1,20 @@
-import { useEffect } from "react";
 import styles from "./homepage.module.scss";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import CityTypeahead from "../../components/CityTypeahead";
 import useHomepageForm from "./useHomepageForm";
 import FormField from "../../components/FormField";
-import { useSearchParams } from 'react-router-dom';
-import { TCity } from "../../_types/TCity";
 
 const Homepage = () => {
     const {
         tomorrowDate,
+        originCity,
+        destinationCity,
         intermediateCities,
         date,
         passengers,
         errors,
         setOriginCity,
         setDestinationCity,
-        setIntermediateCities,
         setDate,
         setPassengers,
         onAddIntermediateCities,
@@ -27,15 +25,14 @@ const Homepage = () => {
 
     return (
         <div className="page-wrapper">
-            <h1 className="h1 text-primary text-center mb-3">
-                Calculate your travel distance
-            </h1>
+            <h1 className="h1 text-primary text-center mb-3">Calculate your travel distance</h1>
             <form onSubmit={onSubmit} className={`${styles.form} bg-light rounded`}>
                 <div>
                     <CityTypeahead
                         label="Origin city"
                         id="origin-city"
                         isInvalid={!!errors?.originCity}
+                        defaultValue={originCity}
                         setStateData={setOriginCity}
                     />
                     {!!errors?.originCity && <p className="text-danger">{errors?.originCity}</p>}
@@ -44,13 +41,14 @@ const Homepage = () => {
                     <CityTypeahead
                         label="Destination city"
                         id="destination-city"
+                        defaultValue={destinationCity}
                         isInvalid={!!errors?.destinationCity}
                         setStateData={setDestinationCity}
                     />
                     {!!errors?.destinationCity && <p className="text-danger">{errors?.destinationCity}</p>}
                 </div>
                 <div className="w-100">
-                    <h2 className="h4 my-3">Intermediate cities</h2>
+                    <p className="h4 my-3">Intermediate cities</p>
                     {intermediateCities.map((item) => {
                         const error = errors?.intermediateCities?.find((c) => c.id === item.id);
                         return (
@@ -59,10 +57,9 @@ const Homepage = () => {
                                     <CityTypeahead
                                         label={"Intermediate city"}
                                         id={item.id}
+                                        defaultValue={item.value}
                                         isInvalid={!!error?.error}
-                                        setStateData={(city) =>
-                                            onIntermediateCityChange(city, item.id)
-                                        }
+                                        setStateData={(city) => onIntermediateCityChange(city, item.id)}
                                     />
                                     {!!error?.error && <p className="text-danger">{error?.error}</p>}
                                 </div>
@@ -74,7 +71,7 @@ const Homepage = () => {
                                     X
                                 </button>
                             </div>
-                        )
+                        );
                     })}
                     <button
                         className="btn btn-primary my-4 btnPrimary"
@@ -99,7 +96,7 @@ const Homepage = () => {
                     type="number"
                     setStateData={setPassengers}
                     errorMessage={errors?.passengers}
-                    defaultValue={!!passengers ? passengers.toString() : ''}
+                    defaultValue={!!passengers ? passengers.toString() : ""}
                 />
                 <button type="submit" className="btn btn-primary my-4 btnPrimary">
                     Submit

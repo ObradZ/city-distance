@@ -1,26 +1,39 @@
 import { useState } from "react";
 import { TCity } from "../_types/TCity";
-import { citiesData, CITY_PROPERTY } from "./cities";
+import { citiesData, CITY_PROPERTY } from "../_fakeData/cities";
 
-const useCities = () => {
+async function wait(waitTime = 400) {
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+}
+
+
+// If you want to use getCitiesFromSearch without state just set updateState to false
+const useCities = (updateState = true) => {
     const [cities, setCities] = useState<TCity[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+
     const getCitiesFromSearch = async (query: string) => {
-        setCities([]);
-        // We can modify this to set limit of characters before sending API call
+        // Here we can set min characters number which triggers api call
         if (query.length < 1 || query === ' ') {
             return;
         }
-        setIsLoading(true);
+        const lowerCaseQuery = query.toLowerCase();
+        if (updateState) {
+            setCities([]);
+            setIsLoading(true);
+        }
+
         // timeout simulate backend
-        setTimeout(() => {
-            const result = citiesData.filter((city) => (
-                city[CITY_PROPERTY.NAME].toLowerCase().includes(query)
-            ));
+        await wait();
+
+        const result = citiesData.filter((city) => (
+            city[CITY_PROPERTY.NAME].toLowerCase().includes(lowerCaseQuery)
+        ));
+        if (updateState) {
             setCities(result);
             setIsLoading(false);
-        }, 400);
-
+        }
+        return result;
     }
 
     return { cities, getCitiesFromSearch, isLoading }

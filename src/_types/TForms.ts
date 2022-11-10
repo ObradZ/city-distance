@@ -21,10 +21,16 @@ export type THomeFormErrors = {
     passengers: string;
 };
 
-export const HP_FORM_URL_PARAMS = {
-    ORIGIN_CITY: "originCity",
-    DESTINATION_CITY: "destinationCity",
-    INTERMEDIATE_CITY: "intermediateCity",
-    DATE: "date",
-    PASSENGERS: "passengers",
+export type TResultUrlData = {
+    originCity: string | null;
+    destinationCity: string | null;
+    intermediateCities?: string[];
+    date: string | null;
+    passengers: string | null;
 };
+
+export type TResultData = {
+    cities: TCity[],
+    date: string | null;
+    passengers: string | null;
+}

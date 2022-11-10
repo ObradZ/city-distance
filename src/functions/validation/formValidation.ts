@@ -1,6 +1,12 @@
 import { THomeInputData, THomeFormErrors } from "../../_types/TForms";
 import { getIsRequiredText } from "../helpers/helpers";
 
+export const getIsInvalidDate = (date: string) => {
+    const pickedDate = new Date(date);
+    const isInvalidDate = pickedDate.toString() === "Invalid Date";
+    return isInvalidDate;
+}
+
 export const validateForm = (inputData: THomeInputData) => {
     const { originCity, destinationCity, intermediateCities, date, passengers } = inputData;
     let isFormValid = true;
@@ -11,7 +17,7 @@ export const validateForm = (inputData: THomeInputData) => {
         date: "",
         passengers: "",
     };
-    console.log(originCity);
+
     // Origin city validation
     if (originCity === null) {
         newErrors.originCity = getIsRequiredText("Origin city");
@@ -36,8 +42,7 @@ export const validateForm = (inputData: THomeInputData) => {
     });
 
     // Date validation
-    const pickedDate = new Date(date);
-    const isInvalidDate = pickedDate.toString() === "Invalid Date";
+    const isInvalidDate = getIsInvalidDate(date);
     newErrors.date = isInvalidDate ? "Date is invalid." : "";
     isFormValid = !isInvalidDate;
 
