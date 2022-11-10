@@ -1,21 +1,15 @@
-import { FormEvent } from "react";
+import { useEffect } from "react";
 import styles from "./homepage.module.scss";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import CityTypeahead from "../../components/CityTypeahead";
 import useHomepageForm from "./useHomepageForm";
 import FormField from "../../components/FormField";
+import { useSearchParams } from 'react-router-dom';
 import { TCity } from "../../_types/TCity";
-import { THomepageFormData } from "../../_types/TForms";
-
-const getRandomId = () => {
-    return Math.random().toString(16).slice(2);
-};
 
 const Homepage = () => {
     const {
         tomorrowDate,
-        originCity,
-        destinationCity,
         intermediateCities,
         date,
         passengers,
@@ -25,50 +19,11 @@ const Homepage = () => {
         setIntermediateCities,
         setDate,
         setPassengers,
-        validateForm,
+        onAddIntermediateCities,
+        onRemoveIntermediateCities,
+        onIntermediateCityChange,
+        onSubmit,
     } = useHomepageForm();
-
-    const onAddIntermediateCities = () => {
-        const id = `city-${getRandomId()}-${intermediateCities.length}`;
-        const newEntry = { id, value: null };
-        setIntermediateCities((prev) => [...prev, newEntry]);
-    };
-
-    const onRemoveIntermediateCities = (id: string) => {
-        setIntermediateCities((prev) => prev.filter((icity) => icity.id !== id));
-    };
-
-    const onIntermediateCityChange = (city: TCity, id: string) => {
-        const newCity = { id, value: city };
-        // Checks if city value already exists and should be updated or we need to add new value
-        const targetIndex = intermediateCities.findIndex((cityItem) => cityItem.id === newCity.id);
-        if (targetIndex === -1) {
-            setIntermediateCities((prev) => [...prev, newCity])
-        } else {
-            const updatedCities = [...intermediateCities];
-            updatedCities[targetIndex] = newCity;
-            setIntermediateCities(updatedCities);
-        }
-    };
-
-    const onSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        const isFormValid = validateForm();
-        if (!isFormValid) {
-            return;
-        }
-
-        const interCities = intermediateCities.map((c) => c.value);
-        const formData = {
-            originCity,
-            destinationCity,
-            intermediateCities: interCities,
-            date,
-            passengers: parseInt(passengers || '0'),
-        } as THomepageFormData;
-
-
-    };
 
     return (
         <div className="page-wrapper">
@@ -144,6 +99,7 @@ const Homepage = () => {
                     type="number"
                     setStateData={setPassengers}
                     errorMessage={errors?.passengers}
+                    defaultValue={!!passengers ? passengers.toString() : ''}
                 />
                 <button type="submit" className="btn btn-primary my-4 btnPrimary">
                     Submit

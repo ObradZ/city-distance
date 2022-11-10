@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TCity } from "../_types/TCity";
-import { citiesData, CityProperty } from "./cities";
+import { citiesData, CITY_PROPERTY } from "./cities";
 
 const useCities = () => {
     const [cities, setCities] = useState<TCity[]>([]);
@@ -15,7 +15,7 @@ const useCities = () => {
         // timeout simulate backend
         setTimeout(() => {
             const result = citiesData.filter((city) => (
-                city[CityProperty.NAME].toLowerCase().includes(query)
+                city[CITY_PROPERTY.NAME].toLowerCase().includes(query)
             ));
             setCities(result);
             setIsLoading(false);

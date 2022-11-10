@@ -3,7 +3,7 @@ import useCities from "../../hooks/useCities";
 import useDebounce from "../../hooks/useDebounce";
 import { useState, useEffect } from "react";
 import { TCity } from "../../_types/TCity";
-import { CityProperty } from "../../hooks/cities";
+import { CITY_PROPERTY } from "../../hooks/cities";
 
 export type CityTypeaheadProps = {
     label: string,
@@ -36,11 +36,11 @@ const CityTypeahead = ({ label, id, setStateData, isInvalid }: CityTypeaheadProp
             <Typeahead
                 options={cities}
                 id={id}
-                labelKey={(option) => (option as TCity)[CityProperty.NAME]}
+                labelKey={(option) => (option as TCity)[CITY_PROPERTY.NAME]}
                 onInputChange={(text) => setSearchQuery(text.toLowerCase())}
                 isLoading={isLoading}
                 emptyLabel="No cities"
-                // style={}
+                defaultInputValue={'Paris'}
                 onChange={(selected) => onCityChange(selected as TCity[])}
                 inputProps={{
                     className: isInvalid ? 'border-danger' : '',

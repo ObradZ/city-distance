@@ -1,6 +1,6 @@
 import { TCity } from "../_types/TCity";
 
-export enum CityProperty {
+export enum CITY_PROPERTY {
     NAME,
     LATITUDE,
     LONGITUDE,
