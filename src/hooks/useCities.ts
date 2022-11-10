@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TCity } from "../_types/TCity";
 import { citiesData, CITY_PROPERTY } from "../_fakeData/cities";
 
-async function wait(waitTime = 400) {
+export const wait = async (waitTime = 400) => {
     await new Promise(resolve => setTimeout(resolve, waitTime));
 }
 

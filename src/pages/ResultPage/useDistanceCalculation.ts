@@ -1,16 +1,9 @@
-import { TCity } from "../../_types/TCity";
 import haversine from 'haversine-distance'
 import { useEffect, useState } from "react";
 import { CITY_PROPERTY } from "../../_fakeData/cities";
 import { TResultData, TResultUrlData } from "../../_types/TForms";
-import useCities from "../../hooks/useCities";
+import useCities, { wait } from "../../hooks/useCities";
 import { getIsInvalidDate } from "../../functions/validation/formValidation";
-
-// const isValidData = (urlData: TResultUrlData) => {
-//     // Check if data is valid, these are required fields from the form
-//     const { originCity, destinationCity, date, passengers } = urlData;
-//     if(!originCity || !destinationCity ||)
-// }
 
 const useDistanceCalculation = () => {
     const { getCitiesFromSearch } = useCities(false);
@@ -39,10 +32,10 @@ const useDistanceCalculation = () => {
             const cityData = await getCitiesFromSearch(city);
             if (cityData && cityData?.length > 0) {
                 resultData.cities.push(cityData[0]);
-                console.log('city push');
                 setFancyLoading({ cities: resultData?.cities?.length, loaded: tempCities?.length });
             }
         }
+        await wait(400);
         if (!getIsInvalidDate(date || '')) {
             resultData.date = date;
         }
