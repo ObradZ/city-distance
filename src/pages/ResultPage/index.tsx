@@ -38,7 +38,7 @@ const ResultPage = () => {
                     </h1>
                 ) : (
                     <h1 className="h1 text-primary text-center mb-3">
-                        Loading cities
+                        Calculating distance and loading cities
                         {!!fancyLoading.cities && !!fancyLoading.loaded ?
                             (<span>
                                 : {fancyLoading.cities}/
