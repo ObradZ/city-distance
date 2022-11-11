@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Distance measuring app
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project has fake api.
 
 ## Available Scripts
 

@@ -11,39 +11,57 @@ const useDistanceCalculation = () => {
     const [fullDistance, setFullDistance] = useState<number | null>(null);
     const [data, setData] = useState<TResultData | null>(null);
     const [fancyLoading, setFancyLoading] = useState({ cities: 0, loaded: 0 });
-
+    const [error, setErrors] = useState('');
     const setDataFromUrlParams = async (urlData: TResultUrlData) => {
-        const { originCity, destinationCity, intermediateCities, date, passengers } = urlData;
-        const tempCities = [];
-        originCity && tempCities.push(originCity);
-        intermediateCities?.forEach((city) => {
-            tempCities.push(city);
-        })
-        destinationCity && tempCities.push(destinationCity);
+        setErrors('');
 
-        // Get result data
-        const resultData: TResultData = {
-            cities: [],
-            date: null,
-            passengers: null,
-        };
-        // We need to get data from api
-        for (const city of tempCities) {
-            const cityData = await getCitiesFromSearch(city);
-            if (cityData && cityData?.length > 0) {
-                resultData.cities.push(cityData[0]);
-                setFancyLoading({ cities: resultData?.cities?.length, loaded: tempCities?.length });
+        try {
+            const { originCity, destinationCity, intermediateCities, date, passengers } = urlData;
+            const tempCities = [];
+            originCity && tempCities.push(originCity.toLowerCase());
+            intermediateCities?.forEach((city) => {
+                tempCities.push(city.toLowerCase());
+            })
+            destinationCity && tempCities.push(destinationCity.toLowerCase());
+
+            // Get result data
+            const resultData: TResultData = {
+                cities: [],
+                date: null,
+                passengers: null,
+            };
+
+            // Simulate error when 'Dijon' is included
+            if (tempCities.includes('dijon')) {
+                await wait(400);
+                setErrors('Something went wrong. Please try again later. (Dijon city error)');
+                return;
+            }
+            // TODO -catch cities here also
+            // We need to get data from api
+            for (const city of tempCities) {
+                const cityData = await getCitiesFromSearch(city);
+                if (cityData && cityData?.length > 0) {
+                    resultData.cities.push(cityData[0]);
+                    setFancyLoading({ cities: resultData?.cities?.length, loaded: tempCities?.length });
+                }
+            }
+            await wait(400);
+            if (!getIsInvalidDate(date || '')) {
+                resultData.date = date;
+            }
+            if (passengers) {
+                resultData.passengers = passengers;
+            }
+
+            setData(resultData);
+        } catch (e) {
+            console.warn("Caught error in useDistanceCalculations: ",e);
+            if (e instanceof Error) {
+                setErrors(e.message)
             }
         }
-        await wait(400);
-        if (!getIsInvalidDate(date || '')) {
-            resultData.date = date;
-        }
-        if (passengers) {
-            resultData.passengers = passengers;
-        }
 
-        setData(resultData);
     }
 
     useEffect(() => {
@@ -70,7 +88,7 @@ const useDistanceCalculation = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data])
 
-    return { data, calculatedDistances, fullDistance, fancyLoading, setDataFromUrlParams };
+    return { data, calculatedDistances, fullDistance, fancyLoading, error, setDataFromUrlParams };
 }
 
 export default useDistanceCalculation;

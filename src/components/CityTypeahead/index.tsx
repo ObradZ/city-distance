@@ -18,6 +18,7 @@ const CityTypeahead = ({ label, id, setStateData, isInvalid, defaultValue }: Cit
         defaultValue?.[CITY_PROPERTY.LONGITUDE] === 0 && defaultValue?.[CITY_PROPERTY.LONGITUDE] === 0;
 
     const { cities, isLoading, getCitiesFromSearch } = useCities();
+    const [error, setError] = useState('');
     const [searchQuery, setSearchQuery] = useState<string>("");
     const debounceCityQuery = useDebounce(searchQuery);
 
@@ -27,11 +28,23 @@ const CityTypeahead = ({ label, id, setStateData, isInvalid, defaultValue }: Cit
         }
     };
 
+    const handleGetCitiesFromSearch = async () => {
+        try {
+            setError('');
+            await getCitiesFromSearch(debounceCityQuery);
+        } catch (e) {
+            console.warn('Caught error in CityTypeahead: ', typeof e);
+            if (e instanceof Error) {
+                setError(e?.message);
+            }
+        }
+    }
+
     // Let's give a little debounce between user typing and API call
     // With this we can make sure that user is finished typing and we have better performance
     useEffect(() => {
-        getCitiesFromSearch(debounceCityQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        handleGetCitiesFromSearch();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debounceCityQuery]);
 
     // Get real default value from url params if needed
@@ -49,7 +62,7 @@ const CityTypeahead = ({ label, id, setStateData, isInvalid, defaultValue }: Cit
             // If city from url is not found we want to reset state to null
             setStateData(targetCity || null);
         })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [defaultValue]);
 
     return (
@@ -67,10 +80,11 @@ const CityTypeahead = ({ label, id, setStateData, isInvalid, defaultValue }: Cit
                 placeholder={defaultValue?.[CITY_PROPERTY.NAME] || ""}
                 onChange={(selected) => onCityChange(selected as TCity[])}
                 inputProps={{
-                    className: isInvalid ? "border-danger" : "",
+                    className: isInvalid || error ? "border-danger" : "",
                     style: { width: "325px" },
                 }}
             />
+            {error && <p className="text-danger mt-2 mb-0">{error}</p>}
         </div>
     );
 };
