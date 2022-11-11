@@ -8,7 +8,7 @@ import { useSearchParams } from "react-router-dom";
 
 const ResultPage = () => {
     const [searchParams] = useSearchParams();
-    const { data, calculatedDistances, fullDistance, fancyLoading, setDataFromUrlParams } =
+    const { data, calculatedDistances, fullDistance, fancyLoading, error, setDataFromUrlParams } =
         useDistanceCalculation();
     const { cities, date, passengers } = data || {};
 
@@ -32,14 +32,21 @@ const ResultPage = () => {
     if (!data) {
         return (
             <div className="page-wrapper">
-                <h1 className="h1 text-primary text-center mb-3">
-                    Loading cities
-                    {!!fancyLoading.cities && !!fancyLoading.loaded ?
-                        (<span>
-                            : {fancyLoading.cities}/
-                            {fancyLoading.loaded}
-                        </span>) : (<span>...</span>)}
-                </h1>
+                {error ? (
+                    <h1 className="h2 text-danger text-center mb-3">
+                        {error}
+                    </h1>
+                ) : (
+                    <h1 className="h1 text-primary text-center mb-3">
+                        Loading cities
+                        {!!fancyLoading.cities && !!fancyLoading.loaded ?
+                            (<span>
+                                : {fancyLoading.cities}/
+                                {fancyLoading.loaded}
+                            </span>) : (<span>...</span>)}
+                    </h1>
+                )}
+
             </div>
         );
     }
