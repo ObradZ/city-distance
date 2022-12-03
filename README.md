@@ -1,6 +1,21 @@
 # Distance measuring app
 
-This project has fake api.
+NOTE: This is practice task that is done to show specific things: 
+  -reading and setting data from url, 
+  -simple dynamic fields/state adding system, 
+  -instant search with data pulling from API(there is no caching but normally it would be done with react-query or something similar), 
+  -custom form validation(for production purpose I would use yup or something similar).
+
+This project has fake api. 
+
+The point of this practice was to show how to handle data retreiving in different componets (of course we can just save data in global state or something similar but
+if you image that date is complex and there is a lot of informations we should avoid that).
+
+Instant search is implemented with React Typeahead. Form validation is implemented. Form data is saved in url so if user copy url link and send it to someone
+form will be populated automatically and data will be pulled from server(cities). 
+
+After you submit the form only ids of the cities are sent to the result page. Data is pulled from the server that and calculations are done.
+At result page also if you copy url and send it to someone everything will work (data pulled from server and distance calculated).
 
 ## Available Scripts
 
@@ -14,7 +29,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm test`
+### 'npm run test'
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
