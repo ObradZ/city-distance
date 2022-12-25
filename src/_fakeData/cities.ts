@@ -28,4 +28,5 @@ export const citiesData: TCity[] = [
     ["Nîmes", 43.836699, 4.360054],
     ["Aix-en-Provence", 43.529742, 5.447427],
     ["Bex-en-Provence", 42.529742, 4.447427],
+    ["Cex-en-Provence", 41.529742, 4.447427],
 ];
