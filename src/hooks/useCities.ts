@@ -5,6 +5,7 @@ import { citiesData, CITY_PROPERTY } from "../_fakeData/cities";
 export const wait = async (waitTime = 400) => {
 	await new Promise((resolve) => setTimeout(resolve, waitTime));
 };
+
 const useCities = (updateState = true) => {
 	const [cities, setCities] = useState<TCity[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
